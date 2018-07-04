@@ -8,4 +8,4 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, dbObj) => {
         console.log('Connected to MongoDB..');
         dbObj.collection('Todos').find().toArray().then(docs => {console.log(JSON.stringify(docs));})
     }
-})
+});
