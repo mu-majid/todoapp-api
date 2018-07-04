@@ -17,4 +17,6 @@ var Todo = mongoose.model('Todo', {
     }
 });
 
+console.log('created todo schema');
+
 module.exports = {Todo};

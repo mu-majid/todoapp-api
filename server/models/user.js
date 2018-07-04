@@ -9,4 +9,6 @@ var User = mongoose.model('User', {
     }
 });
 
+console.log('created user schema');
+
 module.exports = {User};
