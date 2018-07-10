@@ -4,7 +4,8 @@
   "description": "Simple REST API todo app using NodeJS and mongoose",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha server/**/*.test.js",
+    "test-watch": "nodemon --exec 'npm test'"
   },
   "author": "Muhammad Majid",
   "license": "ISC",
@@ -13,5 +14,11 @@
     "express": "^4.16.3",
     "mongodb": "^2.2.5",
     "mongoose": "^5.2.1"
+  },
+  "devDependencies": {
+    "expect": "^23.4.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.0",
+    "supertest": "^3.1.0"
   }
 }

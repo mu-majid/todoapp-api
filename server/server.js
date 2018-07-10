@@ -27,7 +27,15 @@ app.post('/todos', (req, res) => {
         });
 });
 
-// starting server
-app.listen(PORT, () => {
-    console.log(`server started on port ${PORT}`);
-});
+// it means if we are in test mode dont start the app because the test already started it
+if(!module.parent) {
+    app.listen(PORT, () => {
+        console.log(`server started on port ${PORT}`);
+    });
+}
+
+// app.listen(PORT, () => {
+//     console.log(`server started on port ${PORT}`);
+// });
+
+module.exports = {app};

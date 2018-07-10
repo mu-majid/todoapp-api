@@ -4,7 +4,11 @@ var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 // connecting to database
-mongoose.connect('mongodb://localhost:27017/TodoApp');
+mongoose.connect('mongodb://localhost:27017/TodoApp',(err, result) => {
+    if (err) {
+        throw err;
+    }
+});
 
 console.log('connected to the DB');
 
