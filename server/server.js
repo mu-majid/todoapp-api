@@ -6,7 +6,7 @@ var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
 var app = express();
-var PORT = 3000;
+var PORT = 5000;
 
 // takes the json sent from the request and makes an object called body and append it to the req object
 app.use(bodyParser.json());
@@ -27,13 +27,25 @@ app.post('/todos', (req, res) => {
         });
 });
 
+// Listing All todos
+app.get('/todos', (req, res) => {
+    Todo.find()
+    .then((todos => {
+        res.send({
+            todos
+        });
+    })).catch(e => {
+        res.status(400).send(e);
+    });
+})
+
 // it means if we are in test mode dont start the app because the test already started it
+// OR it could be handeled in test script by closing server after every it()
 if(!module.parent) {
     app.listen(PORT, () => {
         console.log(`server started on port ${PORT}`);
     });
 }
-
 // app.listen(PORT, () => {
 //     console.log(`server started on port ${PORT}`);
 // });
