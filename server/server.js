@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser')
+const _ = require('lodash');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
@@ -13,6 +14,12 @@ var PORT = 5000;
 app.use(bodyParser.json());
 
 // routes
+
+//GET /
+app.get('/', (req, res) => {
+    console.log('req', req);
+    res.send('Hello World!');
+});
 
 // Creating a Todo via POST request
 app.post('/todos', (req, res) => {
@@ -84,6 +91,32 @@ app.delete('/todos/:id' , (req, res) => {
         res.status(400).send();
     });
 });
+
+// PATCH /todos/:id update a specific todo
+app.patch('/todos/:id', (req, res) => {
+    var id = req.params.id;
+    var body = _.pick(req.body, ['text', 'completed']);
+    if (!ObjectID.isValid(id)) {
+        console.log('Id is not valid');
+        return res.status(404).send(); 
+    }
+    if (_.isBoolean(body["completed"] && body["completed"])) {
+        body.completedAt = new Date().getTime();
+    } else {
+        body.completed = false;
+        body.completedAt = null; // for removing any value from mongodb you just set it to null
+    }
+    Todo.findByIdAndUpdate(id, {$set: body}, {new: true})
+    .then(todo => {
+        if (!todo) {
+            return res.status(404).send();
+        }
+        res.send({todo});
+    })
+    .catch(e => {
+        res.status(400).send();
+    })
+})
 
 // it means if we are in test mode dont start the app because the test already started it
 // OR it could be handeled in test script by closing server after every it()
