@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {ObjectID} = require('mongodb');
 
 var app = express();
 var PORT = 5000;
@@ -37,6 +38,28 @@ app.get('/todos', (req, res) => {
     })).catch(e => {
         res.status(400).send(e);
     });
+});
+
+// GET /todo:id for fetching a certain todo
+app.get('/todos/:id', (req, res) => {
+    // get the id from the request params
+    var id = req.params.id;
+
+    // chech if is invalid
+    if (!ObjectID.isValid(id)) {
+        return console.log('Id is not valid');
+    }
+    // query the todo
+    Todo.findById(id)
+    .then((todo) => {
+        if(!todo) {
+            return res.status(404).send();
+        }
+        res.send({todo});
+    })
+    .catch(e => {
+        res.status(400).send();
+    })
 })
 
 // it means if we are in test mode dont start the app because the test already started it
