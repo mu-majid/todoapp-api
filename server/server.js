@@ -47,7 +47,9 @@ app.get('/todos/:id', (req, res) => {
 
     // chech if is invalid
     if (!ObjectID.isValid(id)) {
-        return console.log('Id is not valid');
+        console.log('Id is not valid');
+        return res.status(404).send();
+        
     }
     // query the todo
     Todo.findById(id)
@@ -60,7 +62,28 @@ app.get('/todos/:id', (req, res) => {
     .catch(e => {
         res.status(400).send();
     })
-})
+});
+
+// DELETE a todo route
+app.delete('/todos/:id' , (req, res) => {
+    var id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        console.log('Id is not valid');
+        return res.status(404).send(); 
+    }
+    Todo.findByIdAndRemove(id)
+    .then(todo => {
+        console.log(todo)
+        if (!todo) {
+            return res.status(404).send();
+        }
+        res.status(200).send({todo});
+    })
+    .catch(e => {
+        console.log(e);
+        res.status(400).send();
+    });
+});
 
 // it means if we are in test mode dont start the app because the test already started it
 // OR it could be handeled in test script by closing server after every it()
