@@ -86,7 +86,25 @@ UserSchema.pre('save', function (next) {
   } else {
     next();
   }
-})
+});
+
+UserSchema.statics.findByCredentials = async function (email, password) {
+  const User = this;
+  const foundUser = await User.findOne({ email });
+  // comparing passwords
+  if (_.isUndefined(foundUser)) {
+    return Promise.reject('no such user with this email');
+  }
+  bcrypt.compare(password, foundUser.password, (err, result) => {
+    if (result) {
+      return foundUser;
+    }
+    else {
+      Promise.reject('passwords did not match')
+    }
+  })
+
+}
 
 const User = mongoose.model('User', UserSchema);
 
