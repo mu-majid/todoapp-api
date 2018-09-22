@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const _ = require('lodash');
+const config = require('./config/config');
 
 var { mongoose } = require('./db/mongoose');
 var { Todo } = require('./models/todo');
@@ -116,8 +117,37 @@ app.patch('/todos/:id', (req, res) => {
         .catch(e => {
             res.status(400).send();
         })
-})
+});
 
+// USERS Routes
+
+// Create a new user
+app.post('/users', async (req, res) => {
+    const body = _.pick(req.body, ['email', 'password']);
+    const user = new User(body);
+    // saving the user to DB
+    // user.save()
+    //     .then(() => {
+    //         return user.generateAuthToken();
+    //     })
+    //     .then((token) => {
+    //         res.header('x-auth', token).send(user);
+    //     })
+    //     .catch((e) => {
+    //         res.status(400).send(e);
+    //     })
+    try {
+        const savedUser = await user.save();
+        const userToken = await savedUser.generateAuthToken();
+        res.header('x-auth', userToken).send(user);
+
+    } catch (error) {
+        res.send(error);
+
+    }
+
+
+});
 // it means if we are in test mode dont start the app because the test already started it
 // OR it could be handeled in test script by closing server after every it()
 if (!module.parent) {
