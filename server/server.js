@@ -2,12 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
 const config = require('./config/config');
-const { autheticate } = require('./middlewares/authenticate');
 
 const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
 const { ObjectID } = require('mongodb');
+const { autheticate } = require('./middlewares/authenticate');
+
 
 const app = express();
 const PORT = process.env.PORT;
@@ -24,8 +25,8 @@ app.get('/', (req, res) => {
 });
 
 // Creating a Todo via POST request
-app.post('/todos', (req, res) => {
-  const todo = new Todo({ text: req.body.text });
+app.post('/todos', autheticate, (req, res) => {
+  const todo = new Todo({ text: req.body.text, _creator: req.user._id });
   todo.save()
     .then((doc) => {
       res.send(doc);
@@ -37,7 +38,7 @@ app.post('/todos', (req, res) => {
 
 // Listing All todos
 app.get('/todos', (req, res) => {
-  Todo.find()
+  Todo.find({ _creator: req.user._id })
     .then(((todos) => {
       res.send({ todos });
     })).catch((e) => {
