@@ -58,6 +58,22 @@ UserSchema.methods.generateAuthToken = async function () {
 
 }
 
+UserSchema.statics.findByToken = function (token) {
+  const User = this;
+  const decoded;
+  try {
+    decoded = jwt.verify(token, 'saltingOrSecret')
+  } catch (error) {
+    return Promise.reject('un auth..')
+  }
+
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
+  })
+}
+
 const User = mongoose.model('User', UserSchema);
 
 console.log('created user schema');
