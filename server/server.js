@@ -7,7 +7,7 @@ const { mongoose } = require('./db/mongoose');
 const { ObjectID } = require('mongodb');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
-const { autheticate } = require('./middlewares/authenticate');
+const { authenticate } = require('./middlewares/authenticate');
 
 
 const app = express();
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 // Creating a Todo via POST request
-app.post('/todos', autheticate, (req, res) => {
+app.post('/todos', authenticate, (req, res) => {
   const todo = new Todo({ text: req.body.text, _creator: req.user._id });
   todo.save()
     .then((doc) => {
@@ -37,7 +37,7 @@ app.post('/todos', autheticate, (req, res) => {
 });
 
 // Listing All todos
-app.get('/todos', autheticate, (req, res) => {
+app.get('/todos', authenticate, (req, res) => {
   Todo.find({ _creator: req.user._id })
     .then(((todos) => {
       res.send({ todos });
@@ -75,7 +75,7 @@ app.get('/todos/:id', (req, res) => {
 });
 
 // DELETE a todo route
-app.delete('/todos/:id', autheticate, (req, res) => {
+app.delete('/todos/:id', authenticate, (req, res) => {
   const id = req.params.id;
 
   if(!ObjectID.isValid(id)) {
@@ -102,7 +102,7 @@ app.delete('/todos/:id', autheticate, (req, res) => {
 });
 
 // PATCH /todos/:id update a specific todo
-app.patch('/todos/:id', autheticate, (req, res) => {
+app.patch('/todos/:id', authenticate, (req, res) => {
   const id = req.params.id;
   const body = _.pick(req.body, ['text', 'completed']);
 
@@ -185,7 +185,7 @@ app.post('/users/login', async (req, res) => {
 
 // logging out i.e deleting token that was already put using authenticate middleware
 
-app.delete('/users/me/token', autheticate, (req, res) => {
+app.delete('/users/me/token', authenticate, (req, res) => {
   // this user was added by the auth middleware
   req.user.removeToken(req.token)
     .then(() => {

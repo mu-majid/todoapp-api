@@ -113,8 +113,6 @@ UserSchema.statics.findByCredentials = async function (email, password) {
 
   const foundusr = await User.findOne({ email });
 
-  console.log('foundusr', foundusr);
-
 
   if(_.isNull(foundusr)) {
     return 'no such user';
